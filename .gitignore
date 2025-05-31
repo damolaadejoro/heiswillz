@@ -1,0 +1,26 @@
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+*.terraform-version
+*.terraform.lock.hcl
+# Crash logs
+crash.log
+
+# Terraform variable override files
+*.tfvars
+*.tfvars.json
+
+# Sensitive credentials
+*.pem
+*.key
+*.crt
+
+
+# OS-specific files
+.DS_Store
+
+

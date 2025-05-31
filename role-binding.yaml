@@ -1,0 +1,14 @@
+# role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins
+  namespace: devops-exercise
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: devops-exercise
+roleRef:
+  kind: Role
+  name: jenkins
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,10 @@
+# values-postgres.yaml
+auth:
+  enablePostgresUser: true
+  postgresPassword: postgres
+  database: appdb
+primary:
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 8Gi

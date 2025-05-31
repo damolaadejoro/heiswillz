@@ -1,0 +1,31 @@
+iingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - host: grafana.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+persistence:
+  enabled: true
+  size: 8Gi
+  storageClassName: standard
+adminUser: admin
+adminPassword: mysecurepassword
+# ingress:
+#   enabled: true
+#   annotations:
+#     traefik.ingress.kubernetes.io/router.entrypoints: web
+#   hosts:
+#     - grafana.local
+#   paths:
+#     - path: /
+#       pathType: Prefix
+#   tls: []
+# persistence:
+#   enabled: true
+#   size: 8Gi
+#   storageClassName: standard
+# adminUser: admin
+# adminPassword: mysecurepassword

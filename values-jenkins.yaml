@@ -1,0 +1,31 @@
+# values-jenkins.yaml
+controller:
+  installPlugins:
+    - kubernetes:latest
+    - job-dsl:latest
+    - workflow-aggregator:latest
+    - git:latest
+  persistence:
+    enabled: true
+    storageClass: standard
+    size: 8Gi
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: traefik
+    hosts:
+      - host: jenkins.local
+        paths:
+          - path: /
+            pathType: Prefix
+  JCasc:
+    enabled: true
+    configScripts:
+      kubernetes: |
+        clouds:
+          - kubernetes:
+              namespace: devops-exercise
+              serverUrl: https://kubernetes.default
+              skipTlsVerify: true

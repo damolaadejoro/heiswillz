@@ -1,0 +1,18 @@
+# network-policy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-jenkins-to-postgres
+  namespace: devops-exercise
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres-postgresql-0 # Adjust based on your PostgreSQL pod labels
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: devops-exercise
+    ports:
+    - protocol: TCP
+      port: 5432

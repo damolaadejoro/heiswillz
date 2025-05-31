@@ -1,0 +1,34 @@
+controller:
+  installPlugins:
+    - kubernetes:latest
+    - job-dsl:latest
+  additionalExistingSecrets:
+    - name: postgres-secret
+      keyName: postgresql-password
+  additionalContainers:
+    - name: kubectl
+      image: bitnami/kubectl:latest
+      command: ["/bin/sh", "-c", "sleep infinity"]
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "100m"
+        limits:
+          memory: "128Mi"
+          cpu: "200m"
+  customInitContainers:
+    - name: install-kubectl
+      image: bitnami/kubectl:latest
+      command: ["/bin/sh", "-c"]
+      args: ["cp /opt/bitnami/kubectl/bin/kubectl /home/jenkins/kubectl && chmod +x /home/jenkins/kubectl"]
+      securityContext:
+        runAsUser: 0  # Run as root to ensure permissions
+      volumeMounts:
+        - name: jenkins-home
+          mountPath: /home/jenkins
+  volumes:
+    - name: jenkins-home
+      emptyDir: {}
+  volumeMounts:
+    - name: jenkins-home
+      mountPath: /home/jenkins

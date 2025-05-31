@@ -1,0 +1,80 @@
+# # # values-traefik.yaml
+# # deployment:
+# #   replicas: 1
+# # service:
+# #   type: LoadBalancer
+# # ports:
+# #   web:
+# #     port: 80
+# #   websecure:
+# #     port: 443
+# #   traefik:
+# #     port: 9000
+# #     exposed: true
+# # ingressRoute:
+# #   dashboard:
+# #     enabled: true
+# #     matchRule: Host(`traefik.local`)
+# #     entryPoints: ["web"]
+
+# deployment:
+#   replicas: 1
+# service:
+#   type: LoadBalancer
+# ports:
+#   web:
+#     port: 80
+#   websecure:
+#     port: 443
+#   traefik:
+#     port: 9000
+#     exposed: true
+# ingressRoute:
+#   dashboard:
+#     enabled: true
+#     matchRule: Host(`traefik.local`)
+#     entryPoints: ["web"]
+# providers:
+#   kubernetesCRD:
+#     enabled: true
+#     namespaces: ["devops-exercise"]
+#   kubernetesIngress:
+#     enabled: true
+#     namespaces: ["devops-exercise"]
+#     publishedService:
+#       enabled: true
+# rbac:
+#   enabled: true
+
+deployment:
+  replicas: 1
+service:
+  type: LoadBalancer
+ports:
+  web:
+    port: 80
+    exposed: true
+    exposedPort: 80
+    protocol: TCP
+  websecure:
+    port: 443
+    exposed: true
+    exposedPort: 443
+    protocol: TCP
+  traefik:
+    port: 9000
+    exposed: true
+    exposedPort: 9000
+    protocol: TCP
+providers:
+  kubernetesIngress:
+    enabled: true
+    namespaces:
+      - devops-exercise
+    publishedService:
+      enabled: true
+ingressRoute:
+  dashboard:
+    enabled: true
+    matchRule: Host(`traefik.local`)
+    entryPoints: ["web"]
