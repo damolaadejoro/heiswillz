@@ -1,22 +1,22 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: jenkins
+  name: grafana
   namespace: devops-exercise
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
 spec:
   rules:
-  - host: jenkins.local
+  - host: grafana.local
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: jenkins
+            name: grafana
             port:
-              number: 8080
+              number: 80
   tls:
   - hosts:
-    - jenkins.local
+    - grafana.local

@@ -16,6 +16,10 @@ if [ "$1" == "install" ]; then
     # Deploy Traefik
     helm install traefik traefik/traefik -n $NAMESPACE -f values-traefik.yaml
 
+    # Start Minikube tunnel for LoadBalancer services
+    echo "Starting Minikube tunnel for LoadBalancer services..."
+    minikube tunnel &
+
     # Deploy Jenkins
     helm install jenkins jenkins/jenkins -n $NAMESPACE -f values-jenkins.yaml
 
@@ -23,7 +27,8 @@ if [ "$1" == "install" ]; then
     helm install grafana grafana/grafana -n $NAMESPACE -f values-grafana.yaml
 
     # Apply Ingress Resources
-    kubectl apply -f ingress-resources.yaml
+    kubectl apply -f jenkins-ingress.yaml
+    kubectl apply -f grafana-ingress.yaml
 
     # Wait for services to be ready
     echo "Waiting for services to be ready..."
@@ -50,11 +55,15 @@ if [ "$1" == "install" ]; then
     cd ..
 
     # Output important information
-    MINIKUBE_IP=$(minikube ip)
+    TRAEFIK_IP=$(kubectl get svc traefik -n $NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "Not available")
+    if [ "$TRAEFIK_IP" == "Not available" ]; then
+        echo "Warning: Traefik LoadBalancer IP not available yet. Please check the service status manually with 'kubectl get svc traefik -n $NAMESPACE -o wide'."
+        TRAEFIK_IP="10.101.64.72" # Fallback to known IP; update if different
+    fi
     echo "Installation complete. Please ensure you've added these entries to your /etc/hosts file:"
-    echo "$MINIKUBE_IP jenkins.local"
-    echo "$MINIKUBE_IP grafana.local"
-    echo "$MINIKUBE_IP traefik.local"
+    echo "$TRAEFIK_IP jenkins.local"
+    echo "$TRAEFIK_IP grafana.local"
+    echo "$TRAEFIK_IP traefik.local"
     
     # Get Traefik LoadBalancer IP/Port
     echo "Traefik service details:"
@@ -63,6 +72,7 @@ if [ "$1" == "install" ]; then
     echo "Configure Jenkins Job DSL at http://jenkins.local and run SeedJob."
     echo "Access Grafana at http://grafana.local (admin/mysecurepassword)"
     echo "Access Traefik dashboard at http://traefik.local"
+    echo "Note: Keep the Minikube tunnel running in the background (e.g., in a separate terminal with 'minikube tunnel') for LoadBalancer services to work."
 
 elif [ "$1" == "uninstall" ]; then
     echo "Uninstalling DevOps Exercise..."
@@ -75,7 +85,8 @@ elif [ "$1" == "uninstall" ]; then
     fi
 
     # Delete Ingress Resources
-    kubectl delete -f ingress-resources.yaml || true
+    kubectl delete -f jenkins-ingress.yaml || true
+    kubectl delete -f grafana-ingress.yaml || true
 
     # Uninstall Helm releases
     helm uninstall postgres -n $NAMESPACE || true
